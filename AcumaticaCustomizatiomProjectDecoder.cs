@@ -11,7 +11,8 @@ namespace AcumaticaCustomizatiomProjectDecoder
         {
             Console.WriteLine("Enter the folder path :");
 
-            string rootPath = Console.ReadLine();
+            //string rootPath = Console.ReadLine();
+            string rootPath = Directory.GetCurrentDirectory();
 
             string[] documentPaths = Directory.GetFiles(rootPath, "", SearchOption.AllDirectories);
             // if project.xml not exist, do it in child paths.
@@ -26,6 +27,7 @@ namespace AcumaticaCustomizatiomProjectDecoder
                     {
                         await DecodeProjectXMLAsync(documentPath);
                         await ZipFile(filePath, documentPath);
+                        await DeleteDocuments(documentPath);
                     }
                     catch(Exception e)
                     {
@@ -53,8 +55,12 @@ namespace AcumaticaCustomizatiomProjectDecoder
         {
             System.IO.Compression.ZipFile.CreateFromDirectory(folderPath, filePath);
             return Task.CompletedTask;
-        }  
-
+        }
+        public static Task DeleteDocuments(string documentPath)
+        {
+            Directory.Delete(documentPath, true);
+            return Task.CompletedTask;
+        }
         public static Task DecodeProjectXMLAsync(string folderPath)
         {
             var xmldoc = new XmlDocument();
